@@ -42,7 +42,7 @@ export default function AddMovieForm() {
     });
 
     try {
-      const res = await fetch('http://localhost:4000/movies/addMovie', {
+      const res = await fetch('https://api-movieapp.onrender.com/movies/addMovie', {
         method: 'POST',
         headers: { Authorization: `Bearer ${token}` },
         body: formData

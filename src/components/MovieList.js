@@ -5,7 +5,7 @@ export default function MovieList() {
   const [movies, setMovies] = useState([]);
 
   useEffect(() => {
-    fetch("http://localhost:4000/movies/getMovies")
+    fetch("https://api-movieapp.onrender.com/movies/getMovies")
       .then((res) => res.json())
       .then((data) => setMovies(data))
       .catch(() => alert("Failed to fetch movies"));
@@ -20,7 +20,7 @@ export default function MovieList() {
             <div className="card h-100 shadow-sm">
               {movie.image && (
                 <img
-                  src={`http://localhost:4000/uploads/${movie.image}`}
+                  src={`https://api-movieapp.onrender.com/uploads/${movie.image}`}
                   alt={movie.title}
                   className="card-img-top"
                   style={{ height: '300px', objectFit: 'cover' }}

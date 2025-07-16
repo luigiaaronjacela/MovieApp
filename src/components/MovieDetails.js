@@ -25,7 +25,7 @@ export default function MovieDetails() {
 
   const fetchComments = async () => {
     try {
-      const res = await fetch(`http://localhost:4000/comments/getComments/${id}`);
+      const res = await fetch(`https://api-movieapp.onrender.com/comments/getComments/${id}`);
       const data = await res.json();
       setComments(data);
     } catch {
@@ -34,7 +34,7 @@ export default function MovieDetails() {
   };
 
   useEffect(() => {
-    fetch(`http://localhost:4000/movies/getMovie/${id}`)
+    fetch(`https://api-movieapp.onrender.com/movies/getMovie/${id}`)
       .then(res => res.json())
       .then(data => {
         setMovie(data);
@@ -47,7 +47,7 @@ export default function MovieDetails() {
           image: null,
           comment: ''
         });
-        setPreview(`http://localhost:4000/uploads/${data.image}`);
+        setPreview(`https://api-movieapp.onrender.com/uploads/${data.image}`);
         fetchComments();
       })
       .catch(() => notyf.error("Movie not found"));
@@ -73,7 +73,7 @@ export default function MovieDetails() {
     if (form.image) formData.append('image', form.image);
 
     try {
-      const res = await fetch(`http://localhost:4000/movies/updateMovie/${id}`, {
+      const res = await fetch(`https://api-movieapp.onrender.com/movies/updateMovie/${id}`, {
         method: 'PUT',
         headers: {
           Authorization: `Bearer ${token}`
@@ -98,7 +98,7 @@ export default function MovieDetails() {
     if (!window.confirm('Delete this movie?')) return;
 
     try {
-      const res = await fetch(`http://localhost:4000/movies/deleteMovie/${id}`, {
+      const res = await fetch(`https://api-movieapp.onrender.com/movies/deleteMovie/${id}`, {
         method: 'DELETE',
         headers: {
           Authorization: `Bearer ${token}`
@@ -119,7 +119,7 @@ export default function MovieDetails() {
 
   const handleCommentSubmit = async () => {
     try {
-      const res = await fetch(`http://localhost:4000/comments/addComment`, {
+      const res = await fetch(`https://api-movieapp.onrender.com/comments/addComment`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -146,7 +146,7 @@ export default function MovieDetails() {
     if (!window.confirm('Delete this comment?')) return;
 
     try {
-      const res = await fetch(`http://localhost:4000/comments/deleteComment/${commentId}`, {
+      const res = await fetch(`https://api-movieapp.onrender.com/comments/deleteComment/${commentId}`, {
         method: 'DELETE',
         headers: {
           Authorization: `Bearer ${token}`
