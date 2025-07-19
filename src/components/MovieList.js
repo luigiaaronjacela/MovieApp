@@ -1,15 +1,33 @@
 import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
+import './MovieList.css'; // make sure to include spinner CSS here
+import runningLoader from '../assets/running-loader.gif'
 
 export default function MovieList() {
   const [movies, setMovies] = useState([]);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     fetch("https://api-movieapp.onrender.com/movies/getMovies")
       .then((res) => res.json())
-      .then((data) => setMovies(data))
-      .catch(() => alert("Failed to fetch movies"));
+      .then((data) => {
+        setMovies(data);
+        setLoading(false);
+      })
+      .catch(() => {
+        alert("Failed to fetch movies");
+        setLoading(false);
+      });
   }, []);
+
+if (loading) {
+  return (
+    <div className="d-flex flex-column align-items-center justify-content-center" style={{ minHeight: '70vh' }}>
+      <img src={runningLoader} alt="Loading..." style={{ width: '150px' }} />
+      <h5 className="text-secondary mt-3">Loading movies...</h5>
+    </div>
+  );
+}
 
   return (
     <div className="container mt-4">

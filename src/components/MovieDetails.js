@@ -7,6 +7,7 @@ export default function MovieDetails() {
   const navigate = useNavigate();
   const [movie, setMovie] = useState(null);
   const [editMode, setEditMode] = useState(false);
+  const [loading, setLoading] = useState(true);
   const [form, setForm] = useState({
     title: '',
     director: '',
@@ -49,8 +50,12 @@ export default function MovieDetails() {
         });
         setPreview(`https://api-movieapp.onrender.com/uploads/${data.image}`);
         fetchComments();
+        setLoading(false);
       })
-      .catch(() => notyf.error("Movie not found"));
+      .catch(() => {
+        notyf.error("Movie not found");
+        setLoading(false);
+      });
   }, [id]);
 
   const handleChange = (e) => {
@@ -165,94 +170,104 @@ export default function MovieDetails() {
     }
   };
 
-  if (!movie) return <p className="text-center mt-4">Loading...</p>;
+  if (loading) {
+  return (
+    <div className="d-flex flex-column align-items-center justify-content-center" style={{ minHeight: '80vh' }}>
+      <div className="movie-spinner mb-3"></div>
+      <h5 className="text-secondary">Loading movie details...</h5>
+    </div>
+  );
+}
 
   return (
     <div className="container mt-4">
-      <div className="d-flex align-items-start gap-4 flex-wrap">
-  <img
-    src={preview}
-    alt={movie.title}
-    style={{ height: '250px', objectFit: 'cover' }}
-    className="img-thumbnail w-100 w-md-auto"
-  />
-  <div>
-    <h3>{movie.title}</h3>
-    <p><strong>Director:</strong> {movie.director}</p>
-    <p><strong>Genre:</strong> {movie.genre}</p>
-    <p><strong>Year:</strong> {movie.year}</p>
-    <p>{movie.description}</p>
-  </div>
-</div>
-
-      {isAdmin && !editMode && (
-        <div className="mt-3">
-          <button className="btn btn-warning me-2" onClick={() => setEditMode(true)}>✏️ Edit</button>
-          <button className="btn btn-danger" onClick={handleDelete}>🗑 Delete</button>
+      <div className="row g-4 align-items-start">
+        <div className="col-md-5">
+          <img
+            src={preview}
+            alt={movie.title}
+            className="img-fluid rounded shadow"
+            style={{ maxHeight: '400px', objectFit: 'cover' }}
+          />
         </div>
-      )}
+        <div className="col-md-7">
+          <h3>{movie.title}</h3>
+          <p><strong>Director:</strong> {movie.director}</p>
+          <p><strong>Genre:</strong> {movie.genre}</p>
+          <p><strong>Year:</strong> {movie.year}</p>
+          <p>{movie.description}</p>
 
-      {isAdmin && editMode && (
-        <div className="mt-4">
-          <h5>Edit Movie</h5>
-          <input name="title" value={form.title} onChange={handleChange} className="form-control mb-2" placeholder="Title" />
-          <input name="director" value={form.director} onChange={handleChange} className="form-control mb-2" placeholder="Director" />
-          <input name="year" value={form.year} onChange={handleChange} className="form-control mb-2" type="number" />
-          <input name="genre" value={form.genre} onChange={handleChange} className="form-control mb-2" placeholder="Genre" />
-          <textarea name="description" value={form.description} onChange={handleChange} className="form-control mb-2" rows="3" placeholder="Description" />
-          <input name="image" type="file" accept="image/*" className="form-control mb-2" onChange={handleChange} />
-          <button className="btn btn-success me-2" onClick={handleUpdate}>✅ Save</button>
-          <button className="btn btn-secondary" onClick={() => setEditMode(false)}>❌ Cancel</button>
+          {isAdmin && !editMode && (
+            <div className="mt-3">
+              <button className="btn btn-warning me-2" onClick={() => setEditMode(true)}>✏️ Edit</button>
+              <button className="btn btn-danger" onClick={handleDelete}>🗑 Delete</button>
+            </div>
+          )}
+
+          {isAdmin && editMode && (
+            <div className="mt-4">
+              <h5>Edit Movie</h5>
+              <input name="title" value={form.title} onChange={handleChange} className="form-control mb-2" />
+              <input name="director" value={form.director} onChange={handleChange} className="form-control mb-2" />
+              <input name="year" value={form.year} onChange={handleChange} type="number" className="form-control mb-2" />
+              <input name="genre" value={form.genre} onChange={handleChange} className="form-control mb-2" />
+              <textarea name="description" value={form.description} onChange={handleChange} className="form-control mb-2" rows="3" />
+              <input name="image" type="file" accept="image/*" className="form-control mb-2" onChange={handleChange} />
+              <button className="btn btn-success me-2" onClick={handleUpdate}>✅ Save</button>
+              <button className="btn btn-secondary" onClick={() => setEditMode(false)}>❌ Cancel</button>
+            </div>
+          )}
         </div>
-      )}
+      </div>
 
       <hr />
       <h4 className="mt-4">Reviews</h4>
-      {comments.length === 0 && <p>No comments yet.</p>}
-      {comments.map((c) => (
-        <div key={c._id} className="card p-3 mb-3 shadow-sm">
-          <div className="d-flex justify-content-between">
-            <div>
-              <strong>{c.user?.username || "Anonymous"}</strong>
-              <p className="mt-2 mb-1">{c.text}</p>
-              <small className="text-muted">{new Date(c.createdAt).toLocaleDateString()}</small>
+      {comments.length === 0 ? <p>No comments yet.</p> : (
+        comments.map((c) => (
+          <div key={c._id} className="card p-3 mb-3 shadow-sm">
+            <div className="d-flex justify-content-between">
+              <div>
+                <strong>{c.user?.username || "Anonymous"}</strong>
+                <p className="mt-2 mb-1">{c.text}</p>
+                <small className="text-muted">{new Date(c.createdAt).toLocaleDateString()}</small>
+              </div>
+              {isAdmin && (
+                <button onClick={() => handleDeleteComment(c._id)} className="btn btn-sm btn-outline-danger">🗑</button>
+              )}
             </div>
-            {isAdmin && (
-              <button onClick={() => handleDeleteComment(c._id)} className="btn btn-sm btn-outline-danger">🗑</button>
-            )}
           </div>
-        </div>
-      ))}
+        ))
+      )}
 
-     {token ? (
-  <div className="mt-4">
-    <h5>Leave a Review</h5>
-    <div className="mb-2">
-      {[1, 2, 3, 4, 5].map(r => (
-        <span
-          key={r}
-          onClick={() => setRating(r)}
-          style={{ fontSize: "1.5rem", cursor: "pointer", color: r <= rating ? "#ffc107" : "#ccc" }}
-        >⭐</span>
-      ))}
-    </div>
-    <textarea
-      className="form-control mb-2"
-      rows="3"
-      name="comment"
-      value={form.comment}
-      onChange={handleChange}
-      placeholder="Write your thoughts..."
-    />
-    <button className="btn btn-primary" onClick={handleCommentSubmit}>Submit</button>
-  </div>
-) : (
-  <div className="mt-4">
-    <h5>Leave a Review</h5>
-    <p className="text-muted">You must be logged in to leave a comment.</p>
-    <a href="/login" className="btn btn-outline-primary">Login to Comment</a>
-  </div>
-)}
+      {token ? (
+        <div className="mt-4">
+          <h5>Leave a Review</h5>
+          <div className="mb-2">
+            {[1, 2, 3, 4, 5].map(r => (
+              <span
+                key={r}
+                onClick={() => setRating(r)}
+                style={{ fontSize: "1.5rem", cursor: "pointer", color: r <= rating ? "#ffc107" : "#ccc" }}
+              >⭐</span>
+            ))}
+          </div>
+          <textarea
+            className="form-control mb-2"
+            rows="3"
+            name="comment"
+            value={form.comment}
+            onChange={handleChange}
+            placeholder="Write your thoughts..."
+          />
+          <button className="btn btn-primary" onClick={handleCommentSubmit}>Submit</button>
+        </div>
+      ) : (
+        <div className="mt-4">
+          <h5>Leave a Review</h5>
+          <p className="text-muted">You must be logged in to leave a comment.</p>
+          <a href="/login" className="btn btn-outline-primary">Login to Comment</a>
+        </div>
+      )}
     </div>
   );
 }
