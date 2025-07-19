@@ -27,27 +27,26 @@ export default function Register() {
   };
 
   return (
-   <div className="container d-flex justify-content-center align-items-center px-3" style={{ minHeight: '100vh' }}>
-  <div className="w-100" style={{ maxWidth: '500px' }}>
-    <div className="card shadow p-4">
+    <div className="login-bg d-flex justify-content-center align-items-center">
+      <div className="w-100 px-3" style={{ maxWidth: '500px' }}>
+        <div className="card shadow p-4 bg-light bg-opacity-75">
           <h3 className="text-center mb-3">Register</h3>
           <form onSubmit={handleSubmit}>
             <input
-              name="username"
+              type="text"
               placeholder="Username"
               className="form-control mb-3"
               onChange={(e) => setForm({ ...form, username: e.target.value })}
               required
             />
             <input
-              name="email"
+              type="email"
               placeholder="Email"
               className="form-control mb-3"
               onChange={(e) => setForm({ ...form, email: e.target.value })}
               required
             />
             <input
-              name="password"
               type="password"
               placeholder="Password"
               className="form-control mb-3"

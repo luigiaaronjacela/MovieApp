@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { notyf } from '../toast';
+import './Login.css'; // <- add this CSS file for background styling
 
 export default function Login() {
   const [form, setForm] = useState({ email: '', password: '' });
@@ -29,15 +30,25 @@ export default function Login() {
   };
 
   return (
-   <div className="container d-flex justify-content-center align-items-center px-3" style={{ minHeight: '100vh' }}>
-  <div className="w-100" style={{ maxWidth: '500px' }}>
-    <div className="card shadow p-4">
+    <div className="login-bg d-flex justify-content-center align-items-center px-3">
+      <div className="w-100" style={{ maxWidth: '500px' }}>
+        <div className="card shadow p-4 bg-light bg-opacity-75">
           <h3 className="text-center mb-3">Login</h3>
           <form onSubmit={handleSubmit}>
-            <input type="email" placeholder="Email" className="form-control mb-3"
-              onChange={(e) => setForm({ ...form, email: e.target.value })} required />
-            <input type="password" placeholder="Password" className="form-control mb-3"
-              onChange={(e) => setForm({ ...form, password: e.target.value })} required />
+            <input
+              type="email"
+              placeholder="Email"
+              className="form-control mb-3"
+              onChange={(e) => setForm({ ...form, email: e.target.value })}
+              required
+            />
+            <input
+              type="password"
+              placeholder="Password"
+              className="form-control mb-3"
+              onChange={(e) => setForm({ ...form, password: e.target.value })}
+              required
+            />
             <button className="btn btn-success w-100">Login</button>
           </form>
         </div>
